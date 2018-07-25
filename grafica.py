@@ -34,3 +34,19 @@ for i in range(100):
 
 ax.plot_surface(X, Y, R, rstride=1, cstride=1, cmap='cool')
 plt.savefig("tiempo60.pdf")
+
+archivo2=np.genfromtxt("x2.txt",delimiter="",skip_header=0)
+plt.figure()
+RU=np.ones(18)
+J=np.ones(1800);
+contador=0;
+for i in range(18):
+	for j in range(100):
+		J[j]=archivo2[contador];
+		#J[j]=np.log10(archivo2[contador])
+		plt.plot(RU[i],J[j])
+		contador=contador+1;
+
+plt.savefig("x2grafica.pdf")
+
+

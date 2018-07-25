@@ -39,7 +39,7 @@ for(i=0;i<(ny*nx);i++)
 	    {
 		file>>u_inicial[i];
 	    }  
-
+//condiciones de frontera fijas
 
 double fonda[nx][ny];
 double fpresente[nx][ny];
@@ -57,12 +57,19 @@ int b,n,m;
     {
 	  	tiempo[b]=dt*b;
     }  
-
+int r=18;
+double mitad[r][ny];
 std::ofstream tiempocero("tiempocero.txt");
 for (n=0;n<nx;n++){
 for (m=0;m<ny;m++){
 		tiempocero<< fonda[n][m]<<endl;
-	    }}
+if (n==49)
+{
+mitad[0][m]=fonda[n][m];
+mitad[1][m]=fonda[n][m];
+}
+}
+}
 tiempocero.close();
 std::cout<< fonda[99][99]<<u_inicial[9999]<< std::endl;
 std::cout<< nt<< std::endl;
@@ -73,15 +80,31 @@ int a,l;
 for (a=0;a<nx;a++){
 for (l=0;l<ny;l++){
 ffuturo[a][l]=((dt*dt)*(fonda[a][l])) + ((c*c)/(dx*dx))*(fonda[a+2][l]-2*fonda[a+1][l]+(fonda[a][l])) + ((c*c)/(dy*dy))*((fonda[a][l+2])-2*(fonda[a][l+1])+(fonda[a][l]));
+if(a==0||a==99||l==0||l==99)
+{
+ffuturo[a][l]=fonda[a][l];
+}
+if (a==49)
+{
+mitad[2][l]=ffuturo[a][l];
+}
 }
 }
 int cont=0;
+int cont2=0+3;
 while(cont<=3599)
 {
 for (a=0;a<nx;a++){
 for (l=0;l<ny;l++){
 fsesenta[a][l]=(dt*dt)*((2*(ffuturo[a][l])-(fpresente[a][l]))) + ((c*c)/(dx*dx))*(fpresente[a+2][l]-2*fpresente[a+1][l]+(fpresente[a][l])) + ((c*c)/(dy*dy))*((fpresente[a][l+2])-2*(fpresente[a][l+1])+(fpresente[a][l]));
-
+if(a==0||a==99||l==0||l==99)
+{
+fsesenta[a][l]=fpresente[a][l];
+}
+if (a==49&&(cont2%1000==0)&&(cont2<=99))
+{
+mitad[cont2][l]=fsesenta[a][l];
+}
 fpresente[a][l]=ffuturo[a][l];
 ffuturo[a][l]=fsesenta[a][l];
 cont=cont+1;
@@ -94,7 +117,36 @@ for (m=0;m<ny;m++){
 		tiemposesenta<< ffuturo[n][m]<<endl;
 	    }}
 tiemposesenta.close();
+cont=3600;
+cont2=3600+2;
+while(cont<=nt)
+{
+for (a=0;a<nx;a++){
+for (l=0;l<ny;l++){
+fsesenta[a][l]=(dt*dt)*((2*(ffuturo[a][l])-(fpresente[a][l]))) + ((c*c)/(dx*dx))*(fpresente[a+2][l]-2*fpresente[a+1][l]+(fpresente[a][l])) + ((c*c)/(dy*dy))*((fpresente[a][l+2])-2*(fpresente[a][l+1])+(fpresente[a][l]));
+if(a==0||a==99||l==0||l==99)
+{
+fsesenta[a][l]=fpresente[a][l];
+}
+if (a==49&&(cont2%1000==0)&&(cont2<=99))
+{
+mitad[cont2][l]=fsesenta[a][l];
+}
+fpresente[a][l]=ffuturo[a][l];
+ffuturo[a][l]=fsesenta[a][l];
+cont=cont+1;
+}
+}
+}
+int TO;
+std::ofstream x2("x2.txt");
 
+for (m=0;m<ny;m++){
+for (TO=0;TO<18;TO++){
+		x2<<mitad[TO][m]<<endl;
+}
+	    }
+x2.close();
  return 0;
 }
 
